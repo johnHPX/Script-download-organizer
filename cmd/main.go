@@ -17,7 +17,7 @@ func main() {
 
 		for _, file := range files {
 			s := strings.Split(file.Name(), ".")
-			if len(s) > 1 {
+			if len(s) == 2 {
 				err := util.Organizer(s[0], s[1])
 				if err != nil {
 					log.Fatal(err)
@@ -26,5 +26,4 @@ func main() {
 			}
 		}
 	}
-
 }
