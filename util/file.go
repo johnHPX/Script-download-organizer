@@ -4,21 +4,29 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log"
 	"os/exec"
+	"strings"
 	"time"
 )
 
 // CMD é responsável pela execução dos comandos Bash do linux. ela retorna dois valores, a saída e um error.
-func CMD(comand string, args ...string) (string, error) {
+func CMD(args []string) (string, error) {
 	var stdOut, stdErr bytes.Buffer
-	cmd := exec.Command(comand, args...)
+	var cmd *exec.Cmd
+	if OStype == "win" {
+		cmd = exec.Command("powershell", args...)
+	} else {
+		cmd = exec.Command(args[0], args[1:]...)
+	}
+
 	// defini aonde o comando Bash será executado, no nosso caso na pasta "Downloads".
 	cmd.Dir = Path
 	cmd.Stdout = &stdOut
 	cmd.Stderr = &stdErr
 	err := cmd.Run()
 	if err != nil {
-		return "", errors.New("Erro ao executar comando")
+		return "", err
 	}
 	cmdOut, errStd := stdOut.String(), stdErr.String()
 	if errStd != "" {
@@ -27,8 +35,128 @@ func CMD(comand string, args ...string) (string, error) {
 	return cmdOut, nil
 }
 
+func organizer_win(folderRaiz, name, ext string) error {
+	log.Println("Criando a pasta raiz, caso não exista...")
+	// criar a pasta raiz, onde vai ficar o grupo na qual o arquivo faz parte.
+	args := []string{"mkdir", "-Force", folderRaiz}
+	_, err := CMD(args)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Definindo horário...")
+	// definindo variavies de tempo
+	data := time.Now()
+	ano := data.Format("2006")
+	mes := data.Format("01")
+	dia := data.Format("02")
+
+	log.Println("Criando a pasta ano, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s", folderRaiz, ano)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Criando a pasta mês, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s/%s", folderRaiz, ano, mes)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Criando a pasta mês, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s/%s/%s", folderRaiz, ano, mes, dia)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	// nome da pasta pessoal do arquivo
+	nameFolder := strings.Replace(name, " ", "-", -1)
+
+	log.Println("Criando a pasta dia e nome do arquivo, caso não exista...")
+	// pasta com dia e nome do arquivo
+	args[2] = fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	// movendo o arquivo para a nova pasta
+	log.Println("Movendo o arquivo da pasta Downloads para a nova pasta...")
+	args_new := []string{"mv", fmt.Sprintf("'.\\%s.%s'", name, ext), fmt.Sprintf(".\\%s\\%s\\%s\\%s\\%s\\", folderRaiz, ano, mes, dia, nameFolder)}
+	_, err = CMD(args_new)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func organizer_linux(folderRaiz, name, ext string) error {
+	log.Println("Criando a pasta raiz, caso não exista...")
+	// criar a pasta raiz, onde vai ficar o grupo na qual o arquivo faz parte.
+	args := []string{"mkdir", "-p", folderRaiz}
+	_, err := CMD(args)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Definindo horário...")
+	// definindo variavies de tempo
+	data := time.Now()
+	ano := data.Format("2006")
+	mes := data.Format("01")
+	dia := data.Format("02")
+
+	log.Println("Criando a pasta ano, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s", folderRaiz, ano)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Criando a pasta mês, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s/%s", folderRaiz, ano, mes)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Criando a pasta mês, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s/%s/%s", folderRaiz, ano, mes, dia)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	// nome da pasta pessoal do arquivo
+	nameFolder := strings.Replace(name, " ", "-", -1)
+
+	log.Println("Criando a pasta dia e nome do arquivo, caso não exista...")
+	// pasta com dia e nome do arquivo
+	args[2] = fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)
+	_, err = CMD(args)
+	if err != nil {
+		return err
+	}
+
+	// movendo o arquivo para a nova pasta
+	log.Println("Movendo o arquivo da pasta Downloads para a nova pasta...")
+	args_new := []string{"mv", fmt.Sprintf("%s.%s", name, ext), fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)}
+	_, err = CMD(args_new)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Organizer responsável por organizar os arquivos em pastas, nomeadas em categorias, ano, mês e pasta própria dos arquivos.
 func Organizer(name, ext string) error {
+	log.Println("------------------------------------------------")
+	log.Println("Analisando a extensão do arquivo...")
 	// verificando se a extenção do arquivo está presente no Kind
 	var folderRaiz string
 	var exists bool
@@ -41,45 +169,16 @@ func Organizer(name, ext string) error {
 		}
 	}
 	// caso não exista, o arquivo vai ser colocado na pasta "outros".
-	if !exists{
+	if !exists {
 		folderRaiz = "outros"
 	}
 
-	// criar a pasta raiz, onde vai ficar o grupo na qual o arquivo faz parte.
-	_, err := CMD("mkdir", "-p", folderRaiz)
-	if err != nil {
-		return err
-	}
+	log.Println("Este arquivo vai ser organizado na pasta:", folderRaiz)
 
-	// definindo variavies de tempo
-	data := time.Now()
-	ano := data.Format("2006")
-	mes := data.Format("01")
-	diaHora := data.Format("02-15:04:05")
-
-	_, err = CMD("mkdir", "-p", fmt.Sprintf("%s/%s", folderRaiz, ano))
-	if err != nil {
-		return err
-	}
-
-	_, err = CMD("mkdir", "-p", fmt.Sprintf("%s/%s/%s", folderRaiz, ano, mes))
-	if err != nil {
-		return err
-	}
-
-	// nome da pasta pessoal do arquivo
-	nameFolder := fmt.Sprintf("%s-%s", diaHora, name)
-
-	// pasta com dia, hora e nome do arquivo
-	_, err = CMD("mkdir", "-p", fmt.Sprintf("%s/%s/%s/%s", folderRaiz, ano, mes, nameFolder))
-	if err != nil {
-		return err
-	}
-
-	// movendo o arquivo para a nova pasta
-	_, err = CMD("mv", fmt.Sprintf("%s.%s", name, ext), fmt.Sprintf("%s/%s/%s/%s", folderRaiz, ano, mes, nameFolder))
-	if err != nil {
-		return err
+	if OStype == "win" {
+		organizer_win(folderRaiz, name, ext)
+	} else if OStype == "linux" {
+		organizer_linux(folderRaiz, name, ext)
 	}
 
 	return nil
