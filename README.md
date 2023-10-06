@@ -13,5 +13,5 @@ Se estiver no Windows, basta clicar duas vezes no arquivo executavel "main-win.e
 Se estiver no Linux, basta executar o binario "main-linux" pelo terminal da seguinte forma:
 
 ```
-./main
+./main-linux
 ```
