@@ -4,14 +4,10 @@
 
 # como usar:
 
-<h2>Windows</h2>
-Se estiver no Windows, basta clicar duas vezes no arquivo executavel "main-win.exe".
-
-</hr>
-
-<h2>Linux</h2>
-Se estiver no Linux, basta executar o binario "main-linux" pelo terminal da seguinte forma:
-
+<h3>Você precisa ter o Go instalado na sua máquina na versão 1.18 ou a mais recente.</h3>
+Execute: 
 ```
-./main-linux
+go run cmd/main.go
 ```
+
+E o script irá iniciar.
