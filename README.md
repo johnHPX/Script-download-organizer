@@ -1,5 +1,5 @@
-# script-download-organizer
-é um script capaz de organizar os seus downloads de maneira bem simples e com muita rapidez.
+# Script-download-organizer
+<p>Feito com Go, este script é capaz de organizar sua pasta "Downloads" seja no Windows ou no Linux em diretorios separadas pela suas extensões./</p>
 
 
 # como usar:
