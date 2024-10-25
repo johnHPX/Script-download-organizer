@@ -1,6 +1,7 @@
 package util
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"runtime"
@@ -52,7 +53,18 @@ func init() {
 			log.Fatal(err)
 		}
 		u := strings.TrimSpace(user)
-		Path = fmt.Sprintf("/home/%s/Downloads", u)
+
+		var dicInDownload string
+		flag.StringVar(&dicInDownload, "d", "", "Specify directory in Downloads folder. Default is Download/")
+
+		flag.Parse()
+
+		if dicInDownload != "" {
+			Path = fmt.Sprintf("/home/%s/Downloads/%s", u, dicInDownload)
+		} else {
+			Path = fmt.Sprintf("/home/%s/Downloads", u)
+		}
+
 		OStype = "linux"
 	}
 
