@@ -20,7 +20,7 @@ func CMD(args []string) (string, error) {
 		cmd = exec.Command(args[0], args[1:]...)
 	}
 
-	// defini aonde o comando Bash será executado, no nosso caso na pasta "Downloads".
+	// Define onde o comando Bash será executado, no nosso caso na pasta "Downloads".
 	cmd.Dir = Path
 	cmd.Stdout = &stdOut
 	cmd.Stderr = &stdErr
@@ -51,22 +51,8 @@ func organizer_win(folderRaiz, name, ext string) error {
 	mes := data.Format("01")
 	dia := data.Format("02")
 
-	log.Println("Criando a pasta ano, caso não exista...")
-	args[2] = fmt.Sprintf("%s/%s", folderRaiz, ano)
-	_, err = CMD(args)
-	if err != nil {
-		return err
-	}
-
-	log.Println("Criando a pasta mês, caso não exista...")
-	args[2] = fmt.Sprintf("%s/%s/%s", folderRaiz, ano, mes)
-	_, err = CMD(args)
-	if err != nil {
-		return err
-	}
-
-	log.Println("Criando a pasta mês, caso não exista...")
-	args[2] = fmt.Sprintf("%s/%s/%s/%s", folderRaiz, ano, mes, dia)
+	log.Println("Criando a pasta dia-mês-ano, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s-%s-%s", folderRaiz, dia, mes, ano)
 	_, err = CMD(args)
 	if err != nil {
 		return err
@@ -75,17 +61,17 @@ func organizer_win(folderRaiz, name, ext string) error {
 	// nome da pasta pessoal do arquivo
 	nameFolder := strings.Replace(name, " ", "-", -1)
 
-	log.Println("Criando a pasta dia e nome do arquivo, caso não exista...")
-	// pasta com dia e nome do arquivo
-	args[2] = fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)
-	_, err = CMD(args)
-	if err != nil {
-		return err
-	}
+	// log.Println("Criando a pasta dia e nome do arquivo, caso não exista...")
+	// // pasta com dia e nome do arquivo
+	// args[2] = fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)
+	// _, err = CMD(args)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// movendo o arquivo para a nova pasta
+	// Movendo o arquivo para a nova pasta
 	log.Println("Movendo o arquivo da pasta Downloads para a nova pasta...")
-	args_new := []string{"mv", fmt.Sprintf("'.\\%s.%s'", name, ext), fmt.Sprintf(".\\%s\\%s\\%s\\%s\\%s\\", folderRaiz, ano, mes, dia, nameFolder)}
+	args_new := []string{"mv", fmt.Sprintf("'.\\%s.%s'", name, ext), fmt.Sprintf(".\\%s\\%s\\%s\\%s\\%s\\", folderRaiz, dia, mes, ano, nameFolder)}
 	_, err = CMD(args_new)
 	if err != nil {
 		return err
@@ -110,22 +96,8 @@ func organizer_linux(folderRaiz, name, ext string) error {
 	mes := data.Format("01")
 	dia := data.Format("02")
 
-	log.Println("Criando a pasta ano, caso não exista...")
-	args[2] = fmt.Sprintf("%s/%s", folderRaiz, ano)
-	_, err = CMD(args)
-	if err != nil {
-		return err
-	}
-
-	log.Println("Criando a pasta mês, caso não exista...")
-	args[2] = fmt.Sprintf("%s/%s/%s", folderRaiz, ano, mes)
-	_, err = CMD(args)
-	if err != nil {
-		return err
-	}
-
-	log.Println("Criando a pasta mês, caso não exista...")
-	args[2] = fmt.Sprintf("%s/%s/%s/%s", folderRaiz, ano, mes, dia)
+	log.Println("Criando a pasta dia-mês-ano, caso não exista...")
+	args[2] = fmt.Sprintf("%s/%s-%s-%s", folderRaiz, dia, mes, ano)
 	_, err = CMD(args)
 	if err != nil {
 		return err
@@ -134,17 +106,17 @@ func organizer_linux(folderRaiz, name, ext string) error {
 	// nome da pasta pessoal do arquivo
 	nameFolder := strings.Replace(name, " ", "-", -1)
 
-	log.Println("Criando a pasta dia e nome do arquivo, caso não exista...")
-	// pasta com dia e nome do arquivo
-	args[2] = fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)
-	_, err = CMD(args)
-	if err != nil {
-		return err
-	}
+	// log.Println("Criando a pasta dia e nome do arquivo, caso não exista...")
+	// // pasta com dia e nome do arquivo
+	// args[2] = fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)
+	// _, err = CMD(args)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// movendo o arquivo para a nova pasta
+	// Movendo o arquivo para a nova pasta
 	log.Println("Movendo o arquivo da pasta Downloads para a nova pasta...")
-	args_new := []string{"mv", fmt.Sprintf("%s.%s", name, ext), fmt.Sprintf("%s/%s/%s/%s/%s", folderRaiz, ano, mes, dia, nameFolder)}
+	args_new := []string{"mv", fmt.Sprintf("%s.%s", name, ext), fmt.Sprintf("%s/%s-%s-%s/%s", folderRaiz, dia, mes, ano, nameFolder)}
 	_, err = CMD(args_new)
 	if err != nil {
 		return err

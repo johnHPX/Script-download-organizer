@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	log.Println("==========================================================")
+	fmt.Println("==========================================================")
 	control := "yes"
 	for control == "yes" {
 		// lendo os arquivos do diretório Downloads
@@ -48,9 +48,9 @@ func main() {
 				cont += 1
 			}
 		}
-		log.Println("Total de arquivos organizados:", cont)
-		log.Println("Quer organizar novamente a pasta Downloads? [yes/no]")
+		fmt.Println("Total de arquivos organizados:", cont)
+		fmt.Println("Quer organizar novamente a pasta Downloads? [yes/no]")
 		fmt.Scan(&control)
 	}
-	log.Println("==========================================================")
+	fmt.Println("==========================================================")
 }

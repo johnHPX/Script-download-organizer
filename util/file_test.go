@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"testing"
+	"time"
 )
 
 func TestHelloName(t *testing.T) {
@@ -19,6 +20,24 @@ func TestHelloName(t *testing.T) {
 	cmd.Stdout = &stdOut
 	cmd.Stderr = &stdErr
 	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func TestCriarPastasComDatasCompletas(t *testing.T) {
+
+	fmt.Println("INICIOU")
+	data := time.Now()
+	ano := data.Format("2006")
+	mes := data.Format("01")
+	dia := data.Format("02")
+
+	args := []string{"mkdir", "-p", "exemplo"}
+
+	args[2] = fmt.Sprintf("%s/%s-%s-%s", "exemplo", ano, mes, dia)
+	_, err := CMD(args)
 	if err != nil {
 		fmt.Println(err)
 	}
