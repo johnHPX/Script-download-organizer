@@ -1,4 +1,4 @@
-# Script-download-organizer
+# Download's Organizer
 <p>Feito em Go, este script é capaz de organizar sua pasta "Downloads" em diretorios rotulados com base nas extensões dos arquivos baixados. É funcional nos sistemas operacionais Linux e Windows!</p>
 
 ## Como Funciona: 
